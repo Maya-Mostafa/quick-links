@@ -19,14 +19,17 @@
     "@microsoft/sp-office-ui-fabric-core": "1.13.1"
   },
   "devDependencies": {
+    "@microsoft/rush-stack-compiler-3.9": "0.4.47",
+    "@microsoft/sp-build-web": "1.13.1",
+    "@microsoft/sp-module-interfaces": "1.13.1",
+    "@microsoft/sp-tslint-rules": "1.13.1",
+    "@types/jest": "27.5.1",
     "@types/react": "16.9.51",
     "@types/react-dom": "16.9.8",
-    "@microsoft/sp-build-web": "1.13.1",
-    "@microsoft/sp-tslint-rules": "1.13.1",
-    "@microsoft/sp-module-interfaces": "1.13.1",
-    "@microsoft/rush-stack-compiler-3.9": "0.4.47",
-    "gulp": "~4.0.2",
+    "@types/webpack-env": "1.13.1",
     "ajv": "~5.2.2",
-    "@types/webpack-env": "1.13.1"
+    "gulp": "~4.0.2",
+    "jest": "28.1.0",
+    "ts-jest": "28.0.2"
   }
 }
