@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "b619bf4d-6150-4dae-b095-5ee7c7731fc1",
+  "id": "e1be162e-8313-443e-b8d9-62c0bf8f8264",
   "alias": "QuickLinksWebPart",
   "componentType": "WebPart",
 
@@ -22,7 +22,13 @@
     "description": { "default": "QuickLinks description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "QuickLinks"
+      "wpTitle": "",
+      "linksListUrl": "",
+      "linksListName": "",
+      "userProfileProp" : "",
+      "editTxt" : "Edit",
+      "okTxt" : "Apply",
+      "cancelTxt" : "Cancel"
     }
   }]
 }

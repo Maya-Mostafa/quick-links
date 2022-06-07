@@ -1,25 +1,92 @@
 import * as React from 'react';
 import styles from './QuickLinks.module.scss';
 import { IQuickLinksProps } from './IQuickLinksProps';
-import { escape } from '@microsoft/sp-lodash-subset';
+import ILinks from './ILinks/ILinks';
+import { getListItems, updateMyUserProfile } from '../Services/DataRequests';
+import { TextField, PrimaryButton, DefaultButton, ActionButton } from 'office-ui-fabric-react';
 
-export default class QuickLinks extends React.Component<IQuickLinksProps, {}> {
-  public render(): React.ReactElement<IQuickLinksProps> {
-    return (
-      <div className={ styles.quickLinks }>
-        <div className={ styles.container }>
-          <div className={ styles.row }>
-            <div className={ styles.column }>
-              <span className={ styles.title }>Welcome to SharePoint!</span>
-              <p className={ styles.subTitle }>Customize SharePoint experiences using Web Parts.</p>
-              <p className={ styles.description }>{escape(this.props.description)}</p>
-              <a href="https://aka.ms/spfx" className={ styles.button }>
-                <span className={ styles.label }>Learn more</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+export default function QuickLinks (props: IQuickLinksProps) {
+
+  const [quickLinks, setQuickLinks] = React.useState([]);
+  const [searchTxt, setSearchTxt] = React.useState('');
+  const [editEnabled, setEditEnabled] = React.useState(false);
+
+  const editText = editEnabled ? props.okTxt : props.editTxt;
+  
+  const editHander = () =>{
+    setEditEnabled(prev => !prev);
+    if (editEnabled){
+        updateHandler();
+    }
+  };
+
+  React.useEffect(()=>{
+    getListItems(props.context, props.linksListUrl, props.linksListName, props.userProfileProp).then(results => {
+      setQuickLinks(results);
+    });
+  }, []);
+
+  const linkChkHander = (ev: React.MouseEvent<HTMLElement>, checked: boolean, itemId: string) => {
+    setQuickLinks(prevState => {
+      return prevState.map(prevItem => {
+        const updatedItem = {...prevItem};
+        if (updatedItem.id === itemId){
+          updatedItem.checked = !updatedItem.checked;
+          updatedItem.pending = true;
+        }
+        return {...updatedItem};
+      });
+    });
+  };
+
+  const updateHandler = () => {
+    updateMyUserProfile(props.context, quickLinks, props.userProfileProp);
+  };
+  const discardHandler = () => {
+    setEditEnabled(prev => !prev);
+    setQuickLinks(prev => {
+      const origLinks = prev.map(item => {
+        if (item.pending) {
+          item.checked = !item.checked;
+          item.pending = false;
+        }
+        return item;
+      });
+      return [...origLinks];
+    });
+  };
+
+  return (
+		<div className={styles.quickLinks}>
+			<div className={styles.linksHdrOps}>
+				<TextField
+					onChange={(_: any, text: string) => setSearchTxt(text)}
+					className={styles.linksHdrTxt}
+					label={props.wpTitle}
+					underlined
+					placeholder='Search'
+          value={searchTxt}
+				/>
+				<div className={styles.linksHdrBtn}>
+				  {/* <PrimaryButton onClick={editHander}>{editText}</PrimaryButton> */}
+          <ActionButton onClick={editHander} iconProps={{iconName: editEnabled ? 'Save' : 'Edit'}}>{editText}</ActionButton>
+          {editEnabled &&
+            // <DefaultButton onClick={discardHandler}>{props.cancelTxt}</DefaultButton>
+            <ActionButton onClick={discardHandler} iconProps={{iconName: 'Unsubscribe'}}>{props.cancelTxt}</ActionButton>
+          }
+				</div>
+			</div>
+
+			<ILinks
+				linksTitle={props.wpTitle}
+				linksEditText='Edit'
+				linksItems={quickLinks}
+				linkChkHander={linkChkHander}
+				updateHandler={updateHandler}
+				editEnabled={editEnabled}
+        searchTxt = {searchTxt}
+			/>
+		</div>
+  );
+  
 }

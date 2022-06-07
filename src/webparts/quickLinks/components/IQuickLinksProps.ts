@@ -1,3 +1,12 @@
+import { WebPartContext } from "@microsoft/sp-webpart-base";
+
 export interface IQuickLinksProps {
-  description: string;
+  context: WebPartContext;
+  linksListUrl: string;
+  linksListName: string;
+  userProfileProp: string;
+  wpTitle: string;
+  editTxt: string;
+  okTxt: string;
+  cancelTxt: string;
 }

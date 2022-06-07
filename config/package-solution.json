@@ -2,9 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "quick-links-client-side-solution",
-    "id": "8876d5a9-da5a-489d-814a-643de2d2dfa6",
+    "id": "afaa006e-1a08-43d6-88b4-28c74692cb96",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
     "isDomainIsolated": false,
     "developer": {
       "name": "",
