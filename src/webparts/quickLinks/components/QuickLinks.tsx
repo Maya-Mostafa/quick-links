@@ -68,10 +68,8 @@ export default function QuickLinks (props: IQuickLinksProps) {
           value={searchTxt}
 				/>
 				<div className={styles.linksHdrBtn}>
-				  {/* <PrimaryButton onClick={editHander}>{editText}</PrimaryButton> */}
           <ActionButton onClick={editHander} iconProps={{iconName: editEnabled ? 'Save' : 'Edit'}}>{editText}</ActionButton>
           {editEnabled &&
-            // <DefaultButton onClick={discardHandler}>{props.cancelTxt}</DefaultButton>
             <ActionButton onClick={discardHandler} iconProps={{iconName: 'Unsubscribe'}}>{props.cancelTxt}</ActionButton>
           }
 				</div>
