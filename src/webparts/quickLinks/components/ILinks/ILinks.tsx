@@ -27,6 +27,8 @@ export default function ILinks(props: ILinksProps) {
                             <a 
                                 className={linkItem.checked ? styles.linkChk : styles.linkUnChk}
                                 key={linkItem.id} 
+                                target='_blank'
+                                data-interception="off"
                                 href={linkItem.url}>
                                 {linkItem.title}
                             </a>
@@ -38,6 +40,8 @@ export default function ILinks(props: ILinksProps) {
                                     <a 
                                         className={styles.linkChk}
                                         key={linkItem.id} 
+                                        target='_blank'
+                                        data-interception="off"
                                         href={linkItem.url}>
                                         {linkItem.title}
                                     </a>
