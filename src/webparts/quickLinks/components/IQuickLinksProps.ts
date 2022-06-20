@@ -9,4 +9,5 @@ export interface IQuickLinksProps {
   editTxt: string;
   okTxt: string;
   cancelTxt: string;
+  targetAudience: any;
 }

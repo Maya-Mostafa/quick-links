@@ -3,13 +3,19 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'QuickLinksWebPartStrings';
 import QuickLinks from './components/QuickLinks';
 import { IQuickLinksProps } from './components/IQuickLinksProps';
+
+import { PropertyFieldPeoplePicker, IPropertyFieldGroupOrPerson, PrincipalType } from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
+
+export interface IPropertyControlsTestWebPartProps {
+  people: IPropertyFieldGroupOrPerson[];
+}
 
 export interface IQuickLinksWebPartProps {
   linksListUrl: string;
@@ -19,6 +25,7 @@ export interface IQuickLinksWebPartProps {
   editTxt: string;
   okTxt: string;
   cancelTxt: string;
+  targetAudience: any;
 }
 
 export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinksWebPartProps> {
@@ -34,7 +41,8 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
         wpTitle: this.properties.wpTitle,
         editTxt: this.properties.editTxt,
         okTxt: this.properties.okTxt,
-        cancelTxt: this.properties.cancelTxt
+        cancelTxt: this.properties.cancelTxt,
+        targetAudience: this.properties.targetAudience
       }
     );
 
@@ -48,6 +56,7 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
   protected get dataVersion(): Version {
     return Version.parse('1.0');
   }
+
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
@@ -91,6 +100,18 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   label: 'User Profile Property Name',
                   value: this.properties.userProfileProp,
                   description: 'Use PDSBMyApps for Peel applications, and PDSBPeelLinks for Peel links'
+                }),
+                PropertyFieldPeoplePicker('targetAudience', {
+                  label: 'Target Audience',
+                  initialData: this.properties.targetAudience,
+                  allowDuplicate: false,
+                  principalType: [PrincipalType.Users, PrincipalType.SharePoint, PrincipalType.Security],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context as any,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'peopleFieldId'
                 })
               ]
             }

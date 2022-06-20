@@ -1,6 +1,6 @@
 
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import {SPHttpClient, ISPHttpClientOptions} from "@microsoft/sp-http";
+import {SPHttpClient, ISPHttpClientOptions, MSGraphClient} from "@microsoft/sp-http";
 
 export const getListItems = async (context: WebPartContext, listUrl: string, listName: string, profilePropName: string) =>{
     
@@ -94,3 +94,36 @@ export const updateMyUserProfile = async (context: WebPartContext, listItems: an
     }
 };
 
+export const getGraphMemberOf = (context: WebPartContext) : Promise <string> =>{
+    let graphUrl = '/me/transitiveMemberOf/microsoft.graph.group';
+    //let graphUrl = '/me/memberof';
+
+    return new Promise <string> (async(resolve, reject)=>{
+        context.msGraphClientFactory
+        .getClient()
+        .then((client: MSGraphClient)=>{
+            client
+                .api(graphUrl)
+                .header('ConsistencyLevel', 'eventual')
+                .count(true)
+                .select('displayName')
+                .top(500)
+                .get((error, response: any, rawResponse?: any)=>{
+                    // console.log("graph response", response);
+                    resolve(response);
+                });
+        });
+    });
+};
+
+export const isFromTargetAudience = (graphResponse: any, wpTargetAudience: any) => {
+    let userGroups = [];
+    for (let group of graphResponse){
+        userGroups[group.displayName] = group.displayName;
+    }
+    for (let audience of wpTargetAudience){
+        if (userGroups[audience.fullName])
+            return true;
+    }
+    return false;
+};

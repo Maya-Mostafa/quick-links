@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './QuickLinks.module.scss';
 import { IQuickLinksProps } from './IQuickLinksProps';
 import ILinks from './ILinks/ILinks';
-import { getListItems, updateMyUserProfile } from '../Services/DataRequests';
+import { getListItems, updateMyUserProfile, getGraphMemberOf, isFromTargetAudience } from '../Services/DataRequests';
 import { TextField, PrimaryButton, DefaultButton, ActionButton } from 'office-ui-fabric-react';
 
 export default function QuickLinks (props: IQuickLinksProps) {
@@ -10,6 +10,7 @@ export default function QuickLinks (props: IQuickLinksProps) {
   const [quickLinks, setQuickLinks] = React.useState([]);
   const [searchTxt, setSearchTxt] = React.useState('');
   const [editEnabled, setEditEnabled] = React.useState(false);
+  const [showBasedOnTargetAudience, setShowBasedOnTargetAudience] = React.useState(true);
 
   const editText = editEnabled ? props.okTxt : props.editTxt;
   
@@ -24,6 +25,11 @@ export default function QuickLinks (props: IQuickLinksProps) {
     getListItems(props.context, props.linksListUrl, props.linksListName, props.userProfileProp).then(results => {
       setQuickLinks(results);
     });
+    if (props.targetAudience && props.targetAudience.length > 0){
+      getGraphMemberOf(props.context).then((res: any) => {
+        setShowBasedOnTargetAudience(isFromTargetAudience(res.value, props.targetAudience));
+      });
+    }
   }, []);
 
   const linkChkHander = (ev: React.MouseEvent<HTMLElement>, checked: boolean, itemId: string) => {
@@ -57,34 +63,38 @@ export default function QuickLinks (props: IQuickLinksProps) {
   };
 
   return (
-		<div className={styles.quickLinks}>
-			<div className={styles.linksHdrOps}>
-				<TextField
-					onChange={(_: any, text: string) => setSearchTxt(text)}
-					className={styles.linksHdrTxt}
-					label={props.wpTitle}
-					underlined
-					placeholder='Search'
-          value={searchTxt}
-				/>
-				<div className={styles.linksHdrBtn}>
-          <ActionButton onClick={editHander} iconProps={{iconName: editEnabled ? 'Save' : 'Edit'}}>{editText}</ActionButton>
-          {editEnabled &&
-            <ActionButton onClick={discardHandler} iconProps={{iconName: 'Unsubscribe'}}>{props.cancelTxt}</ActionButton>
-          }
-				</div>
-			</div>
-
-			<ILinks
-				linksTitle={props.wpTitle}
-				linksEditText='Edit'
-				linksItems={quickLinks}
-				linkChkHander={linkChkHander}
-				updateHandler={updateHandler}
-				editEnabled={editEnabled}
-        searchTxt = {searchTxt}
-			/>
-		</div>
+    <>
+      {showBasedOnTargetAudience &&
+        <div className={styles.quickLinks}>
+          <div className={styles.linksHdrOps}>
+            <TextField
+              onChange={(_: any, text: string) => setSearchTxt(text)}
+              className={styles.linksHdrTxt}
+              label={props.wpTitle}
+              underlined
+              placeholder='Search'
+              value={searchTxt}
+            />
+            <div className={styles.linksHdrBtn}>
+              <ActionButton onClick={editHander} iconProps={{iconName: editEnabled ? 'Save' : 'Edit'}}>{editText}</ActionButton>
+              {editEnabled &&
+                <ActionButton onClick={discardHandler} iconProps={{iconName: 'Unsubscribe'}}>{props.cancelTxt}</ActionButton>
+              }
+            </div>
+          </div>
+    
+          <ILinks
+            linksTitle={props.wpTitle}
+            linksEditText='Edit'
+            linksItems={quickLinks}
+            linkChkHander={linkChkHander}
+            updateHandler={updateHandler}
+            editEnabled={editEnabled}
+            searchTxt = {searchTxt}
+          />
+        </div>
+      }
+    </>
   );
   
 }
